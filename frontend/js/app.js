@@ -624,6 +624,13 @@ async function loadHistory() {
 }
 
 // Helper Functions
+function updateBalance(newBalance) {
+    if (user) {
+        user.balance = newBalance;
+        document.getElementById('balance').textContent = newBalance.toFixed(2);
+    }
+}
+
 function showResult(game, message, className) {
     const resultDiv = document.getElementById(game + 'Result');
     resultDiv.textContent = message;
