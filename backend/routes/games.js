@@ -25,9 +25,6 @@ const validateBetAmount = (betAmount, maxBet = 10000) => {
   if (betAmount > maxBet) {
     return { valid: false, error: `Bet amount cannot exceed $${maxBet}` };
   }
-  if (!Number.isFinite(betAmount)) {
-    return { valid: false, error: 'Invalid bet amount' };
-  }
   return { valid: true };
 };
 
