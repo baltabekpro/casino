@@ -4,6 +4,30 @@ const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Fisher-Yates shuffle algorithm for proper randomization
+const shuffleArray = (array) => {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
+
+// Validation helper
+const validateBetAmount = (betAmount, maxBet = 10000) => {
+  if (!betAmount || typeof betAmount !== 'number') {
+    return { valid: false, error: 'Bet amount is required and must be a number' };
+  }
+  if (betAmount <= 0) {
+    return { valid: false, error: 'Bet amount must be greater than 0' };
+  }
+  if (betAmount > maxBet) {
+    return { valid: false, error: `Bet amount cannot exceed $${maxBet}` };
+  }
+  return { valid: true };
+};
+
 // Helper function to update user balance and record game
 const recordGame = (userId, gameType, betAmount, winAmount, result, callback) => {
   const db = getDb();
@@ -53,8 +77,10 @@ router.post('/slots', authenticateToken, (req, res) => {
   const { betAmount } = req.body;
   const userId = req.user.id;
 
-  if (!betAmount || betAmount <= 0) {
-    return res.status(400).json({ error: 'Invalid bet amount' });
+  // Validate bet amount
+  const validation = validateBetAmount(betAmount);
+  if (!validation.valid) {
+    return res.status(400).json({ error: validation.error });
   }
 
   const db = getDb();
@@ -122,8 +148,19 @@ router.post('/roulette', authenticateToken, (req, res) => {
   const { betAmount, betType, betValue } = req.body;
   const userId = req.user.id;
 
-  if (!betAmount || betAmount <= 0 || !betType) {
-    return res.status(400).json({ error: 'Invalid bet parameters' });
+  // Validate bet amount
+  const validation = validateBetAmount(betAmount);
+  if (!validation.valid) {
+    return res.status(400).json({ error: validation.error });
+  }
+
+  if (!betType || typeof betType !== 'string') {
+    return res.status(400).json({ error: 'Invalid bet type' });
+  }
+
+  const validBetTypes = ['number', 'color', 'even_odd', 'low_high'];
+  if (!validBetTypes.includes(betType)) {
+    return res.status(400).json({ error: 'Invalid bet type' });
   }
 
   const db = getDb();
@@ -195,8 +232,16 @@ router.post('/blackjack', authenticateToken, (req, res) => {
   const { betAmount, action, gameState } = req.body;
   const userId = req.user.id;
 
-  if (!betAmount || betAmount <= 0) {
-    return res.status(400).json({ error: 'Invalid bet amount' });
+  // Validate bet amount
+  const validation = validateBetAmount(betAmount);
+  if (!validation.valid) {
+    return res.status(400).json({ error: validation.error });
+  }
+
+  // Validate action
+  const validActions = ['start', 'hit', 'stand'];
+  if (!action || !validActions.includes(action)) {
+    return res.status(400).json({ error: 'Invalid action' });
   }
 
   const db = getDb();
@@ -211,7 +256,7 @@ router.post('/blackjack', authenticateToken, (req, res) => {
         deck.push({ suit, value });
       }
     }
-    return deck.sort(() => Math.random() - 0.5);
+    return shuffleArray(deck);
   };
 
   const getCardValue = (card) => {
@@ -355,6 +400,312 @@ router.post('/blackjack', authenticateToken, (req, res) => {
         });
       });
     }
+  });
+});
+
+// Poker game (Texas Hold'em - simplified)
+router.post('/poker', authenticateToken, (req, res) => {
+  const { betAmount } = req.body;
+  const userId = req.user.id;
+
+  // Validate bet amount
+  const validation = validateBetAmount(betAmount);
+  if (!validation.valid) {
+    return res.status(400).json({ error: validation.error });
+  }
+
+  const db = getDb();
+
+  db.get('SELECT balance FROM users WHERE id = ?', [userId], (err, user) => {
+    if (err) {
+      return res.status(500).json({ error: 'Server error' });
+    }
+
+    if (user.balance < betAmount) {
+      return res.status(400).json({ error: 'Insufficient balance' });
+    }
+
+    // Create deck
+    const suits = ['♠', '♥', '♦', '♣'];
+    const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+    const deck = [];
+    for (let suit of suits) {
+      for (let value of values) {
+        deck.push({ suit, value });
+      }
+    }
+    const shuffledDeck = shuffleArray(deck);
+
+    // Deal cards
+    const playerHand = [shuffledDeck.pop(), shuffledDeck.pop()];
+    const communityCards = [shuffledDeck.pop(), shuffledDeck.pop(), shuffledDeck.pop(), shuffledDeck.pop(), shuffledDeck.pop()];
+
+    // Evaluate hand (simplified)
+    const evaluateHand = (hand, community) => {
+      const allCards = [...hand, ...community];
+      const values = allCards.map(c => c.value);
+      const suits = allCards.map(c => c.suit);
+      
+      // Count value frequencies
+      const valueCounts = {};
+      values.forEach(v => valueCounts[v] = (valueCounts[v] || 0) + 1);
+      const counts = Object.values(valueCounts).sort((a, b) => b - a);
+      
+      // Count suit frequencies
+      const suitCounts = {};
+      suits.forEach(s => suitCounts[s] = (suitCounts[s] || 0) + 1);
+      const hasFlush = Object.values(suitCounts).some(c => c >= 5);
+      
+      // Simplified hand evaluation
+      if (hasFlush && counts[0] === 1) return { rank: 'Flush', multiplier: 6 };
+      if (counts[0] === 4) return { rank: 'Four of a Kind', multiplier: 10 };
+      if (counts[0] === 3 && counts[1] === 2) return { rank: 'Full House', multiplier: 8 };
+      if (hasFlush) return { rank: 'Flush', multiplier: 6 };
+      if (counts[0] === 3) return { rank: 'Three of a Kind', multiplier: 4 };
+      if (counts[0] === 2 && counts[1] === 2) return { rank: 'Two Pair', multiplier: 2.5 };
+      if (counts[0] === 2) return { rank: 'Pair', multiplier: 1.5 };
+      return { rank: 'High Card', multiplier: 0 };
+    };
+
+    const { rank, multiplier } = evaluateHand(playerHand, communityCards);
+    const winAmount = multiplier > 0 ? betAmount * multiplier : 0;
+    const won = winAmount > 0;
+
+    const result = { playerHand, communityCards, handRank: rank };
+
+    recordGame(userId, 'poker', betAmount, winAmount, result, (err, newBalance) => {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to record game' });
+      }
+
+      res.json({
+        playerHand,
+        communityCards,
+        handRank: rank,
+        won,
+        winAmount,
+        newBalance
+      });
+    });
+  });
+});
+
+// Dice game (Craps)
+router.post('/dice', authenticateToken, (req, res) => {
+  const { betAmount, betType } = req.body;
+  const userId = req.user.id;
+
+  // Validate bet amount
+  const validation = validateBetAmount(betAmount);
+  if (!validation.valid) {
+    return res.status(400).json({ error: validation.error });
+  }
+
+  // Validate bet type
+  const validBetTypes = ['seven', 'eleven', 'high', 'low', 'even', 'odd'];
+  if (!betType || !validBetTypes.includes(betType)) {
+    return res.status(400).json({ error: 'Invalid bet type' });
+  }
+
+  const db = getDb();
+
+  db.get('SELECT balance FROM users WHERE id = ?', [userId], (err, user) => {
+    if (err) {
+      return res.status(500).json({ error: 'Server error' });
+    }
+
+    if (user.balance < betAmount) {
+      return res.status(400).json({ error: 'Insufficient balance' });
+    }
+
+    // Roll two dice
+    const dice1 = Math.floor(Math.random() * 6) + 1;
+    const dice2 = Math.floor(Math.random() * 6) + 1;
+    const total = dice1 + dice2;
+
+    let winAmount = 0;
+    let won = false;
+
+    // Check win conditions
+    switch (betType) {
+      case 'seven':
+        if (total === 7) {
+          winAmount = betAmount * 5;
+          won = true;
+        }
+        break;
+      case 'eleven':
+        if (total === 11) {
+          winAmount = betAmount * 8;
+          won = true;
+        }
+        break;
+      case 'high':
+        if (total >= 8 && total <= 12) {
+          winAmount = betAmount * 2;
+          won = true;
+        }
+        break;
+      case 'low':
+        if (total >= 2 && total <= 6) {
+          winAmount = betAmount * 2;
+          won = true;
+        }
+        break;
+      case 'even':
+        if (total % 2 === 0) {
+          winAmount = betAmount * 2;
+          won = true;
+        }
+        break;
+      case 'odd':
+        if (total % 2 === 1) {
+          winAmount = betAmount * 2;
+          won = true;
+        }
+        break;
+    }
+
+    const result = { dice1, dice2, total, betType, won };
+
+    recordGame(userId, 'dice', betAmount, winAmount, result, (err, newBalance) => {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to record game' });
+      }
+
+      res.json({
+        dice1,
+        dice2,
+        total,
+        won,
+        winAmount,
+        newBalance
+      });
+    });
+  });
+});
+
+// Baccarat game
+router.post('/baccarat', authenticateToken, (req, res) => {
+  const { betAmount, side } = req.body;
+  const userId = req.user.id;
+
+  // Validate bet amount
+  const validation = validateBetAmount(betAmount);
+  if (!validation.valid) {
+    return res.status(400).json({ error: validation.error });
+  }
+
+  // Validate side
+  const validSides = ['player', 'banker', 'tie'];
+  if (!side || !validSides.includes(side)) {
+    return res.status(400).json({ error: 'Invalid betting side' });
+  }
+
+  const db = getDb();
+
+  db.get('SELECT balance FROM users WHERE id = ?', [userId], (err, user) => {
+    if (err) {
+      return res.status(500).json({ error: 'Server error' });
+    }
+
+    if (user.balance < betAmount) {
+      return res.status(400).json({ error: 'Insufficient balance' });
+    }
+
+    // Create deck
+    const suits = ['♠', '♥', '♦', '♣'];
+    const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+    const deck = [];
+    for (let suit of suits) {
+      for (let value of values) {
+        deck.push({ suit, value });
+      }
+    }
+    const shuffledDeck = shuffleArray(deck);
+
+    // Deal cards
+    const playerHand = [shuffledDeck.pop(), shuffledDeck.pop()];
+    const bankerHand = [shuffledDeck.pop(), shuffledDeck.pop()];
+
+    // Calculate baccarat values
+    const getBaccaratValue = (hand) => {
+      let value = 0;
+      hand.forEach(card => {
+        if (card.value === 'A') value += 1;
+        else if (['J', 'Q', 'K'].includes(card.value)) value += 0;
+        else value += parseInt(card.value);
+      });
+      return value % 10;
+    };
+
+    let playerValue = getBaccaratValue(playerHand);
+    let bankerValue = getBaccaratValue(bankerHand);
+
+    // Third card rules (simplified)
+    if (playerValue <= 5 && bankerValue <= 5) {
+      playerHand.push(shuffledDeck.pop());
+      playerValue = getBaccaratValue(playerHand);
+      
+      if (bankerValue <= 5) {
+        bankerHand.push(shuffledDeck.pop());
+        bankerValue = getBaccaratValue(bankerHand);
+      }
+    } else if (playerValue <= 5) {
+      playerHand.push(shuffledDeck.pop());
+      playerValue = getBaccaratValue(playerHand);
+    } else if (bankerValue <= 5) {
+      bankerHand.push(shuffledDeck.pop());
+      bankerValue = getBaccaratValue(bankerHand);
+    }
+
+    // Determine winner
+    let winner;
+    let won = false;
+    let winAmount = 0;
+
+    if (playerValue > bankerValue) {
+      winner = 'Player';
+      if (side === 'player') {
+        won = true;
+        winAmount = betAmount * 2;
+      }
+    } else if (bankerValue > playerValue) {
+      winner = 'Banker';
+      if (side === 'banker') {
+        won = true;
+        winAmount = betAmount * 1.95; // House commission
+      }
+    } else {
+      winner = 'Tie';
+      if (side === 'tie') {
+        won = true;
+        winAmount = betAmount * 9;
+      } else {
+        // Push on tie for player/banker bets - return original bet
+        // balanceChange will be 0 (winAmount - betAmount = betAmount - betAmount = 0)
+        winAmount = betAmount;
+      }
+    }
+
+    const result = { playerHand, bankerHand, playerValue, bankerValue, winner };
+
+    recordGame(userId, 'baccarat', betAmount, winAmount, result, (err, newBalance) => {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to record game' });
+      }
+
+      res.json({
+        playerHand,
+        bankerHand,
+        playerValue,
+        bankerValue,
+        winner,
+        won,
+        winAmount,
+        newBalance
+      });
+    });
   });
 });
 

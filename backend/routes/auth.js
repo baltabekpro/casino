@@ -14,8 +14,23 @@ router.post('/register', async (req, res) => {
     return res.status(400).json({ error: 'Username and password are required' });
   }
 
-  if (password.length < 6) {
+  // Validate username
+  if (typeof username !== 'string' || username.length < 3 || username.length > 20) {
+    return res.status(400).json({ error: 'Username must be between 3 and 20 characters' });
+  }
+
+  // Check for valid username characters
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    return res.status(400).json({ error: 'Username can only contain letters, numbers, and underscores' });
+  }
+
+  // Validate password
+  if (typeof password !== 'string' || password.length < 6) {
     return res.status(400).json({ error: 'Password must be at least 6 characters' });
+  }
+
+  if (password.length > 100) {
+    return res.status(400).json({ error: 'Password is too long' });
   }
 
   try {
@@ -52,6 +67,11 @@ router.post('/login', (req, res) => {
 
   if (!username || !password) {
     return res.status(400).json({ error: 'Username and password are required' });
+  }
+
+  // Basic type validation
+  if (typeof username !== 'string' || typeof password !== 'string') {
+    return res.status(400).json({ error: 'Invalid credentials format' });
   }
 
   const db = getDb();
