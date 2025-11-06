@@ -214,7 +214,7 @@ Authorization: Bearer <your_jwt_token>
       "bet_amount": 50,
       "win_amount": 150,
       "result": "{\"reels\":[\"💎\",\"💎\",\"💎\"],\"winType\":\"jackpot\"}",
-      "played_at": "2024-01-15 14:30:22"
+      "played_at": "2025-11-06 14:30:22"
     },
     {
       "id": 14,
@@ -223,7 +223,7 @@ Authorization: Bearer <your_jwt_token>
       "bet_amount": 100,
       "win_amount": 0,
       "result": "{\"number\":13,\"color\":\"red\",\"isWin\":false}",
-      "played_at": "2024-01-15 14:28:15"
+      "played_at": "2025-11-06 14:28:15"
     }
   ]
 }
@@ -1051,4 +1051,4 @@ The API may be updated with new features. We strive to maintain backward compati
 
 ---
 
-**Last Documentation Update**: 2024-01-15
+**Last Documentation Update**: 2025-11-06
