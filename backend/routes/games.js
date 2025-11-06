@@ -4,6 +4,23 @@ const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Validation helper
+const validateBetAmount = (betAmount, maxBet = 10000) => {
+  if (!betAmount || typeof betAmount !== 'number') {
+    return { valid: false, error: 'Bet amount is required and must be a number' };
+  }
+  if (betAmount <= 0) {
+    return { valid: false, error: 'Bet amount must be greater than 0' };
+  }
+  if (betAmount > maxBet) {
+    return { valid: false, error: `Bet amount cannot exceed $${maxBet}` };
+  }
+  if (!Number.isFinite(betAmount)) {
+    return { valid: false, error: 'Invalid bet amount' };
+  }
+  return { valid: true };
+};
+
 // Helper function to update user balance and record game
 const recordGame = (userId, gameType, betAmount, winAmount, result, callback) => {
   const db = getDb();
@@ -53,8 +70,10 @@ router.post('/slots', authenticateToken, (req, res) => {
   const { betAmount } = req.body;
   const userId = req.user.id;
 
-  if (!betAmount || betAmount <= 0) {
-    return res.status(400).json({ error: 'Invalid bet amount' });
+  // Validate bet amount
+  const validation = validateBetAmount(betAmount);
+  if (!validation.valid) {
+    return res.status(400).json({ error: validation.error });
   }
 
   const db = getDb();
@@ -122,8 +141,19 @@ router.post('/roulette', authenticateToken, (req, res) => {
   const { betAmount, betType, betValue } = req.body;
   const userId = req.user.id;
 
-  if (!betAmount || betAmount <= 0 || !betType) {
-    return res.status(400).json({ error: 'Invalid bet parameters' });
+  // Validate bet amount
+  const validation = validateBetAmount(betAmount);
+  if (!validation.valid) {
+    return res.status(400).json({ error: validation.error });
+  }
+
+  if (!betType || typeof betType !== 'string') {
+    return res.status(400).json({ error: 'Invalid bet type' });
+  }
+
+  const validBetTypes = ['number', 'color', 'even_odd', 'low_high'];
+  if (!validBetTypes.includes(betType)) {
+    return res.status(400).json({ error: 'Invalid bet type' });
   }
 
   const db = getDb();
@@ -195,8 +225,16 @@ router.post('/blackjack', authenticateToken, (req, res) => {
   const { betAmount, action, gameState } = req.body;
   const userId = req.user.id;
 
-  if (!betAmount || betAmount <= 0) {
-    return res.status(400).json({ error: 'Invalid bet amount' });
+  // Validate bet amount
+  const validation = validateBetAmount(betAmount);
+  if (!validation.valid) {
+    return res.status(400).json({ error: validation.error });
+  }
+
+  // Validate action
+  const validActions = ['start', 'hit', 'stand'];
+  if (!action || !validActions.includes(action)) {
+    return res.status(400).json({ error: 'Invalid action' });
   }
 
   const db = getDb();
@@ -363,8 +401,10 @@ router.post('/poker', authenticateToken, (req, res) => {
   const { betAmount } = req.body;
   const userId = req.user.id;
 
-  if (!betAmount || betAmount <= 0) {
-    return res.status(400).json({ error: 'Invalid bet amount' });
+  // Validate bet amount
+  const validation = validateBetAmount(betAmount);
+  if (!validation.valid) {
+    return res.status(400).json({ error: validation.error });
   }
 
   const db = getDb();
@@ -448,8 +488,16 @@ router.post('/dice', authenticateToken, (req, res) => {
   const { betAmount, betType } = req.body;
   const userId = req.user.id;
 
-  if (!betAmount || betAmount <= 0 || !betType) {
-    return res.status(400).json({ error: 'Invalid bet parameters' });
+  // Validate bet amount
+  const validation = validateBetAmount(betAmount);
+  if (!validation.valid) {
+    return res.status(400).json({ error: validation.error });
+  }
+
+  // Validate bet type
+  const validBetTypes = ['seven', 'eleven', 'high', 'low', 'even', 'odd'];
+  if (!betType || !validBetTypes.includes(betType)) {
+    return res.status(400).json({ error: 'Invalid bet type' });
   }
 
   const db = getDb();
@@ -535,8 +583,16 @@ router.post('/baccarat', authenticateToken, (req, res) => {
   const { betAmount, side } = req.body;
   const userId = req.user.id;
 
-  if (!betAmount || betAmount <= 0 || !side) {
-    return res.status(400).json({ error: 'Invalid bet parameters' });
+  // Validate bet amount
+  const validation = validateBetAmount(betAmount);
+  if (!validation.valid) {
+    return res.status(400).json({ error: validation.error });
+  }
+
+  // Validate side
+  const validSides = ['player', 'banker', 'tie'];
+  if (!side || !validSides.includes(side)) {
+    return res.status(400).json({ error: 'Invalid betting side' });
   }
 
   const db = getDb();
