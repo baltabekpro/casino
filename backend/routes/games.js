@@ -4,6 +4,16 @@ const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Fisher-Yates shuffle algorithm for proper randomization
+const shuffleArray = (array) => {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
+
 // Validation helper
 const validateBetAmount = (betAmount, maxBet = 10000) => {
   if (!betAmount || typeof betAmount !== 'number') {
@@ -249,7 +259,7 @@ router.post('/blackjack', authenticateToken, (req, res) => {
         deck.push({ suit, value });
       }
     }
-    return deck.sort(() => Math.random() - 0.5);
+    return shuffleArray(deck);
   };
 
   const getCardValue = (card) => {
@@ -427,11 +437,11 @@ router.post('/poker', authenticateToken, (req, res) => {
         deck.push({ suit, value });
       }
     }
-    deck.sort(() => Math.random() - 0.5);
+    const shuffledDeck = shuffleArray(deck);
 
     // Deal cards
-    const playerHand = [deck.pop(), deck.pop()];
-    const communityCards = [deck.pop(), deck.pop(), deck.pop(), deck.pop(), deck.pop()];
+    const playerHand = [shuffledDeck.pop(), shuffledDeck.pop()];
+    const communityCards = [shuffledDeck.pop(), shuffledDeck.pop(), shuffledDeck.pop(), shuffledDeck.pop(), shuffledDeck.pop()];
 
     // Evaluate hand (simplified)
     const evaluateHand = (hand, community) => {
@@ -615,11 +625,11 @@ router.post('/baccarat', authenticateToken, (req, res) => {
         deck.push({ suit, value });
       }
     }
-    deck.sort(() => Math.random() - 0.5);
+    const shuffledDeck = shuffleArray(deck);
 
     // Deal cards
-    const playerHand = [deck.pop(), deck.pop()];
-    const bankerHand = [deck.pop(), deck.pop()];
+    const playerHand = [shuffledDeck.pop(), shuffledDeck.pop()];
+    const bankerHand = [shuffledDeck.pop(), shuffledDeck.pop()];
 
     // Calculate baccarat values
     const getBaccaratValue = (hand) => {
@@ -637,18 +647,18 @@ router.post('/baccarat', authenticateToken, (req, res) => {
 
     // Third card rules (simplified)
     if (playerValue <= 5 && bankerValue <= 5) {
-      playerHand.push(deck.pop());
+      playerHand.push(shuffledDeck.pop());
       playerValue = getBaccaratValue(playerHand);
       
       if (bankerValue <= 5) {
-        bankerHand.push(deck.pop());
+        bankerHand.push(shuffledDeck.pop());
         bankerValue = getBaccaratValue(bankerHand);
       }
     } else if (playerValue <= 5) {
-      playerHand.push(deck.pop());
+      playerHand.push(shuffledDeck.pop());
       playerValue = getBaccaratValue(playerHand);
     } else if (bankerValue <= 5) {
-      bankerHand.push(deck.pop());
+      bankerHand.push(shuffledDeck.pop());
       bankerValue = getBaccaratValue(bankerHand);
     }
 
@@ -675,7 +685,8 @@ router.post('/baccarat', authenticateToken, (req, res) => {
         won = true;
         winAmount = betAmount * 9;
       } else {
-        // Push on tie for player/banker bets
+        // Push on tie for player/banker bets - return original bet
+        // balanceChange will be 0 (winAmount - betAmount = betAmount - betAmount = 0)
         winAmount = betAmount;
       }
     }

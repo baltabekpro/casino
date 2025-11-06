@@ -32,9 +32,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Apply rate limiting
-app.use('/api/', limiter);
+// Apply rate limiting - more specific routes first
 app.use('/api/auth/', authLimiter);
+app.use('/api/', limiter);
 
 // Serve static files from frontend
 app.use(express.static(path.join(__dirname, 'frontend')));
