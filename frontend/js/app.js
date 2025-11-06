@@ -59,7 +59,7 @@ function initializeEventListeners() {
         if (number >= 0 && number <= 36) {
             playRoulette('number', number);
         } else {
-            showResult('roulette', 'Please enter a number between 0 and 36', 'loss');
+            showResult('roulette', 'Пожалуйста, введите число от 0 до 36', 'loss');
         }
     });
 
@@ -214,12 +214,12 @@ async function playSlots() {
     const spinBtn = document.getElementById('spinBtn');
 
     if (betAmount <= 0 || betAmount > user.balance) {
-        showResult('slots', 'Invalid bet amount', 'loss');
+        showResult('slots', 'Неверная сумма ставки', 'loss');
         return;
     }
 
     spinBtn.disabled = true;
-    showResult('slots', 'Spinning...', '');
+    showResult('slots', 'Крутим...', '');
 
     // Animate reels
     const reels = [
@@ -253,9 +253,9 @@ async function playSlots() {
             updateUserDisplay();
 
             if (data.winAmount > 0) {
-                showResult('slots', `You won $${data.winAmount.toFixed(2)}! 🎉`, 'win');
+                showResult('slots', `Вы выиграли $${data.winAmount.toFixed(2)}! 🎉`, 'win');
             } else {
-                showResult('slots', 'Try again!', 'loss');
+                showResult('slots', 'Попробуйте еще раз!', 'loss');
             }
 
             spinBtn.disabled = false;
@@ -271,11 +271,11 @@ async function playRoulette(betType, betValue) {
     const betAmount = parseFloat(document.getElementById('rouletteBet').value);
 
     if (betAmount <= 0 || betAmount > user.balance) {
-        showResult('roulette', 'Invalid bet amount', 'loss');
+        showResult('roulette', 'Неверная сумма ставки', 'loss');
         return;
     }
 
-    showResult('roulette', 'Spinning...', '');
+    showResult('roulette', 'Крутим...', '');
 
     // Animate wheel
     const wheel = document.getElementById('rouletteNumber');
@@ -302,9 +302,9 @@ async function playRoulette(betType, betValue) {
             updateUserDisplay();
 
             if (isWin) {
-                showResult('roulette', `You won $${data.winAmount.toFixed(2)}! Number: ${number} (${color})`, 'win');
+                showResult('roulette', `Вы выиграли $${data.winAmount.toFixed(2)}! Номер: ${number} (${color === 'red' ? 'красное' : color === 'black' ? 'чёрное' : 'зелёное'})`, 'win');
             } else {
-                showResult('roulette', `You lost! Number: ${number} (${color})`, 'loss');
+                showResult('roulette', `Вы проиграли! Номер: ${number} (${color === 'red' ? 'красное' : color === 'black' ? 'чёрное' : 'зелёное'})`, 'loss');
             }
         }, 1600);
     } catch (error) {
@@ -317,7 +317,7 @@ async function dealBlackjack() {
     const betAmount = parseFloat(document.getElementById('blackjackBet').value);
 
     if (betAmount <= 0 || betAmount > user.balance) {
-        showResult('blackjack', 'Invalid bet amount', 'loss');
+        showResult('blackjack', 'Неверная сумма ставки', 'loss');
         return;
     }
 
@@ -333,9 +333,9 @@ async function dealBlackjack() {
             updateUserDisplay();
             
             if (data.result.outcome === 'blackjack') {
-                showResult('blackjack', `Blackjack! You won $${data.winAmount.toFixed(2)}! 🎉`, 'win');
+                showResult('blackjack', `Блэкджек! Вы выиграли $${data.winAmount.toFixed(2)}! 🎉`, 'win');
             } else {
-                showResult('blackjack', 'Push! Bet returned.', '');
+                showResult('blackjack', 'Ничья! Ставка возвращена.', '');
             }
             enableBlackjackButtons(true, false, false);
         } else {
@@ -362,7 +362,7 @@ async function hitBlackjack() {
             displayBlackjackHands(data.result.playerHand, data.result.dealerHand);
             user.balance = data.balance;
             updateUserDisplay();
-            showResult('blackjack', 'Bust! You lost.', 'loss');
+            showResult('blackjack', 'Перебор! Вы проиграли.', 'loss');
             enableBlackjackButtons(true, false, false);
             blackjackGameState = null;
         } else {
@@ -395,19 +395,19 @@ async function standBlackjack() {
         
         switch(data.result.outcome) {
             case 'win':
-                message = `You won $${data.winAmount.toFixed(2)}!`;
+                message = `Вы выиграли $${data.winAmount.toFixed(2)}!`;
                 resultClass = 'win';
                 break;
             case 'dealer_bust':
-                message = `Dealer busted! You won $${data.winAmount.toFixed(2)}!`;
+                message = `Перебор у дилера! Вы выиграли $${data.winAmount.toFixed(2)}!`;
                 resultClass = 'win';
                 break;
             case 'loss':
-                message = 'Dealer wins!';
+                message = 'Дилер выиграл!';
                 resultClass = 'loss';
                 break;
             case 'push':
-                message = 'Push! Bet returned.';
+                message = 'Ничья! Ставка возвращена.';
                 resultClass = '';
                 break;
         }
@@ -455,7 +455,7 @@ async function playPoker() {
     const betAmount = parseFloat(document.getElementById('pokerBet').value);
     
     if (!betAmount || betAmount <= 0) {
-        showResult('poker', 'Please enter a valid bet amount', 'loss');
+        showResult('poker', 'Пожалуйста, введите корректную сумму ставки', 'loss');
         return;
     }
 
@@ -466,14 +466,14 @@ async function playPoker() {
         displayPokerHands(data.playerHand, data.communityCards);
         
         // Display hand rank
-        document.getElementById('pokerHandRank').textContent = `Hand: ${data.handRank}`;
+        document.getElementById('pokerHandRank').textContent = `Комбинация: ${data.handRank}`;
         
         // Display result
         const profit = data.winAmount - betAmount;
         if (data.won) {
-            showResult('poker', `You won $${data.winAmount.toFixed(2)}! (${data.handRank})`, 'win');
+            showResult('poker', `Вы выиграли $${data.winAmount.toFixed(2)}! (${data.handRank})`, 'win');
         } else {
-            showResult('poker', `You lost $${betAmount.toFixed(2)}`, 'loss');
+            showResult('poker', `Вы проиграли $${betAmount.toFixed(2)}`, 'loss');
         }
         
         // Update balance
@@ -504,7 +504,7 @@ async function playDice(betType) {
     const betAmount = parseFloat(document.getElementById('diceBet').value);
     
     if (!betAmount || betAmount <= 0) {
-        showResult('dice', 'Please enter a valid bet amount', 'loss');
+        showResult('dice', 'Пожалуйста, введите корректную сумму ставки', 'loss');
         return;
     }
 
@@ -525,13 +525,13 @@ async function playDice(betType) {
             const diceSymbols = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
             dice1.textContent = diceSymbols[data.dice1 - 1];
             dice2.textContent = diceSymbols[data.dice2 - 1];
-            document.getElementById('diceTotal').textContent = `Total: ${data.total}`;
+            document.getElementById('diceTotal').textContent = `Сумма: ${data.total}`;
             
             // Display result
             if (data.won) {
-                showResult('dice', `You won $${data.winAmount.toFixed(2)}! Rolled ${data.total}`, 'win');
+                showResult('dice', `Вы выиграли $${data.winAmount.toFixed(2)}! Выпало ${data.total}`, 'win');
             } else {
-                showResult('dice', `You lost $${betAmount.toFixed(2)}. Rolled ${data.total}`, 'loss');
+                showResult('dice', `Вы проиграли $${betAmount.toFixed(2)}. Выпало ${data.total}`, 'loss');
             }
             
             // Update balance
@@ -549,7 +549,7 @@ async function playBaccarat(side) {
     const betAmount = parseFloat(document.getElementById('baccaratBet').value);
     
     if (!betAmount || betAmount <= 0) {
-        showResult('baccarat', 'Please enter a valid bet amount', 'loss');
+        showResult('baccarat', 'Пожалуйста, введите корректную сумму ставки', 'loss');
         return;
     }
 
@@ -564,10 +564,11 @@ async function playBaccarat(side) {
         document.getElementById('bankerValue').textContent = data.bankerValue;
         
         // Display result
+        const winnerText = data.winner === 'Player' ? 'Игрок' : data.winner === 'Banker' ? 'Банкир' : 'Ничья';
         if (data.won) {
-            showResult('baccarat', `${data.winner} wins! You won $${data.winAmount.toFixed(2)}`, 'win');
+            showResult('baccarat', `${winnerText} выиграл! Вы выиграли $${data.winAmount.toFixed(2)}`, 'win');
         } else {
-            showResult('baccarat', `${data.winner} wins. You lost $${betAmount.toFixed(2)}`, 'loss');
+            showResult('baccarat', `${winnerText} выиграл. Вы проиграли $${betAmount.toFixed(2)}`, 'loss');
         }
         
         // Update balance
@@ -600,7 +601,7 @@ async function loadHistory() {
         const historyList = document.getElementById('historyList');
         
         if (data.history.length === 0) {
-            historyList.innerHTML = '<p style="text-align: center; color: #ffd700;">No game history yet. Start playing!</p>';
+            historyList.innerHTML = '<p style="text-align: center; color: #ffd700;">История игр пока пуста. Начните играть!</p>';
             return;
         }
 
@@ -609,12 +610,20 @@ async function loadHistory() {
             const profitClass = profit > 0 ? 'win' : profit < 0 ? 'loss' : '';
             const profitText = profit > 0 ? `+$${profit.toFixed(2)}` : profit < 0 ? `-$${Math.abs(profit).toFixed(2)}` : '$0.00';
 
+            const gameNames = {
+                'slots': 'СЛОТЫ',
+                'roulette': 'РУЛЕТКА',
+                'blackjack': 'БЛЭКДЖЕК',
+                'poker': 'ПОКЕР',
+                'dice': 'КОСТИ',
+                'baccarat': 'БАККАРА'
+            };
             return `
                 <div class="history-item">
-                    <div class="game-type">${item.game_type.toUpperCase()}</div>
-                    <div>Bet: $${item.bet_amount.toFixed(2)}</div>
-                    <div class="${profitClass}">Profit: ${profitText}</div>
-                    <div>${new Date(item.played_at).toLocaleString()}</div>
+                    <div class="game-type">${gameNames[item.game_type] || item.game_type.toUpperCase()}</div>
+                    <div>Ставка: $${item.bet_amount.toFixed(2)}</div>
+                    <div class="${profitClass}">Прибыль: ${profitText}</div>
+                    <div>${new Date(item.played_at).toLocaleString('ru-RU')}</div>
                 </div>
             `;
         }).join('');
