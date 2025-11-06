@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const path = require('path');
 const authRoutes = require('./backend/routes/auth');
 const gameRoutes = require('./backend/routes/games');
@@ -12,8 +11,8 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from frontend
 app.use(express.static(path.join(__dirname, 'frontend')));
