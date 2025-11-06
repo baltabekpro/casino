@@ -108,23 +108,31 @@ http://localhost:3000
 - **Security**: bcryptjs for password hashing
 - **Deployment**: Heroku-ready with Procfile
 
-## API Endpoints
+## API Documentation
 
-### Authentication
+📚 **Complete API documentation available in multiple languages:**
+- [API Documentation (Russian)](API.md) - Полная документация API на русском языке
+- [API Documentation (English)](API_EN.md) - Complete API documentation in English
+
+### Quick API Reference
+
+#### Authentication
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login user
 
-### User
+#### User
 - `GET /api/user/profile` - Get user profile
 - `GET /api/user/history` - Get game history
 
-### Games
+#### Games
 - `POST /api/games/slots` - Play slots
 - `POST /api/games/roulette` - Play roulette
 - `POST /api/games/blackjack` - Play blackjack
 - `POST /api/games/poker` - Play poker
 - `POST /api/games/dice` - Play dice
 - `POST /api/games/baccarat` - Play baccarat
+
+For detailed request/response examples, authentication, error handling, and code samples, see the [complete API documentation](API.md).
 
 ## Deployment
 
