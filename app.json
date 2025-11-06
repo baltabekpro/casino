@@ -1,0 +1,35 @@
+{
+  "name": "Casino Royale",
+  "description": "Professional casino website with multiple games including Slots, Roulette, Blackjack, Poker, Dice, and Baccarat",
+  "repository": "https://github.com/baltabekpro/casino",
+  "keywords": [
+    "casino",
+    "games",
+    "node",
+    "express",
+    "gambling"
+  ],
+  "image": "heroku/nodejs",
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "JWT_SECRET": {
+      "description": "Secret key for JWT authentication",
+      "generator": "secret",
+      "required": true
+    },
+    "NODE_ENV": {
+      "description": "Node environment",
+      "value": "production"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  }
+}
