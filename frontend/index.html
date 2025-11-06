@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casino Royale - Play & Win</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Login/Register Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <h2 id="authTitle">Welcome to Casino Royale</h2>
+            <div id="authForm">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <div id="authError" class="error"></div>
+                <button id="loginBtn" class="btn btn-primary">Login</button>
+                <button id="registerBtn" class="btn btn-secondary">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app" style="display: none;">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <h1>🎰 Casino Royale</h1>
+                <div class="user-info">
+                    <span id="usernameDisplay"></span>
+                    <span class="balance">Balance: $<span id="balance">0</span></span>
+                    <button id="logoutBtn" class="btn btn-small">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="game-nav">
+            <button class="nav-btn active" data-game="slots">🎰 Slots</button>
+            <button class="nav-btn" data-game="roulette">🎡 Roulette</button>
+            <button class="nav-btn" data-game="blackjack">🃏 Blackjack</button>
+            <button class="nav-btn" data-game="history">📊 History</button>
+        </nav>
+
+        <!-- Game Containers -->
+        <main class="game-container">
+            <!-- Slots Game -->
+            <div id="slotsGame" class="game active">
+                <h2>Slot Machine</h2>
+                <div class="slots-display">
+                    <div class="reel" id="reel1">🍒</div>
+                    <div class="reel" id="reel2">🍋</div>
+                    <div class="reel" id="reel3">🍊</div>
+                </div>
+                <div class="bet-controls">
+                    <label>Bet Amount: $</label>
+                    <input type="number" id="slotsBet" value="10" min="1" max="1000">
+                    <button id="spinBtn" class="btn btn-primary btn-large">SPIN 🎰</button>
+                </div>
+                <div id="slotsResult" class="result"></div>
+            </div>
+
+            <!-- Roulette Game -->
+            <div id="rouletteGame" class="game">
+                <h2>Roulette</h2>
+                <div class="roulette-wheel">
+                    <div id="rouletteNumber" class="roulette-number">0</div>
+                </div>
+                <div class="bet-controls">
+                    <label>Bet Amount: $</label>
+                    <input type="number" id="rouletteBet" value="10" min="1" max="1000">
+                </div>
+                <div class="roulette-bets">
+                    <div class="bet-section">
+                        <h3>Bet Type</h3>
+                        <div class="bet-buttons">
+                            <button class="bet-btn" data-type="color" data-value="red">Red (2x)</button>
+                            <button class="bet-btn" data-type="color" data-value="black">Black (2x)</button>
+                            <button class="bet-btn" data-type="even_odd" data-value="even">Even (2x)</button>
+                            <button class="bet-btn" data-type="even_odd" data-value="odd">Odd (2x)</button>
+                            <button class="bet-btn" data-type="low_high" data-value="low">Low 1-18 (2x)</button>
+                            <button class="bet-btn" data-type="low_high" data-value="high">High 19-36 (2x)</button>
+                        </div>
+                    </div>
+                    <div class="bet-section">
+                        <h3>Number (36x)</h3>
+                        <input type="number" id="rouletteNumberBet" placeholder="0-36" min="0" max="36">
+                        <button id="betNumberBtn" class="btn btn-primary">Bet on Number</button>
+                    </div>
+                </div>
+                <div id="rouletteResult" class="result"></div>
+            </div>
+
+            <!-- Blackjack Game -->
+            <div id="blackjackGame" class="game">
+                <h2>Blackjack</h2>
+                <div class="blackjack-table">
+                    <div class="dealer-hand">
+                        <h3>Dealer: <span id="dealerValue">0</span></h3>
+                        <div id="dealerCards" class="cards"></div>
+                    </div>
+                    <div class="player-hand">
+                        <h3>Player: <span id="playerValue">0</span></h3>
+                        <div id="playerCards" class="cards"></div>
+                    </div>
+                </div>
+                <div class="bet-controls">
+                    <label>Bet Amount: $</label>
+                    <input type="number" id="blackjackBet" value="10" min="1" max="1000">
+                    <button id="dealBtn" class="btn btn-primary">Deal</button>
+                    <button id="hitBtn" class="btn btn-secondary" disabled>Hit</button>
+                    <button id="standBtn" class="btn btn-secondary" disabled>Stand</button>
+                </div>
+                <div id="blackjackResult" class="result"></div>
+            </div>
+
+            <!-- History -->
+            <div id="historyGame" class="game">
+                <h2>Game History</h2>
+                <div id="historyList" class="history-list"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
