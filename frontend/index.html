@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Casino Royale - Play & Win</title>
+    <title>Казино Рояль - Играй и Выигрывай</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     <!-- Login/Register Modal -->
     <div id="authModal" class="modal">
         <div class="modal-content">
-            <h2 id="authTitle">Welcome to Casino Royale</h2>
+            <h2 id="authTitle">Добро пожаловать в Казино Рояль</h2>
             <div id="authForm">
-                <input type="text" id="username" placeholder="Username" required>
-                <input type="password" id="password" placeholder="Password" required>
+                <input type="text" id="username" placeholder="Имя пользователя" required>
+                <input type="password" id="password" placeholder="Пароль" required>
                 <div id="authError" class="error"></div>
-                <button id="loginBtn" class="btn btn-primary">Login</button>
-                <button id="registerBtn" class="btn btn-secondary">Register</button>
+                <button id="loginBtn" class="btn btn-primary">Войти</button>
+                <button id="registerBtn" class="btn btn-secondary">Регистрация</button>
             </div>
         </div>
     </div>
@@ -26,70 +26,70 @@
         <!-- Header -->
         <header>
             <div class="header-content">
-                <h1>🎰 Casino Royale</h1>
+                <h1>🎰 Казино Рояль</h1>
                 <div class="user-info">
                     <span id="usernameDisplay"></span>
-                    <span class="balance">Balance: $<span id="balance">0</span></span>
-                    <button id="logoutBtn" class="btn btn-small">Logout</button>
+                    <span class="balance">Баланс: $<span id="balance">0</span></span>
+                    <button id="logoutBtn" class="btn btn-small">Выйти</button>
                 </div>
             </div>
         </header>
 
         <!-- Navigation -->
         <nav class="game-nav">
-            <button class="nav-btn active" data-game="slots">🎰 Slots</button>
-            <button class="nav-btn" data-game="roulette">🎡 Roulette</button>
-            <button class="nav-btn" data-game="blackjack">🃏 Blackjack</button>
-            <button class="nav-btn" data-game="poker">🃏 Poker</button>
-            <button class="nav-btn" data-game="dice">🎲 Dice</button>
-            <button class="nav-btn" data-game="baccarat">💎 Baccarat</button>
-            <button class="nav-btn" data-game="history">📊 History</button>
+            <button class="nav-btn active" data-game="slots">🎰 Слоты</button>
+            <button class="nav-btn" data-game="roulette">🎡 Рулетка</button>
+            <button class="nav-btn" data-game="blackjack">🃏 Блэкджек</button>
+            <button class="nav-btn" data-game="poker">🃏 Покер</button>
+            <button class="nav-btn" data-game="dice">🎲 Кости</button>
+            <button class="nav-btn" data-game="baccarat">💎 Баккара</button>
+            <button class="nav-btn" data-game="history">📊 История</button>
         </nav>
 
         <!-- Game Containers -->
         <main class="game-container">
             <!-- Slots Game -->
             <div id="slotsGame" class="game active">
-                <h2>Slot Machine</h2>
+                <h2>Игровой Автомат</h2>
                 <div class="slots-display">
                     <div class="reel" id="reel1">🍒</div>
                     <div class="reel" id="reel2">🍋</div>
                     <div class="reel" id="reel3">🍊</div>
                 </div>
                 <div class="bet-controls">
-                    <label>Bet Amount: $</label>
+                    <label>Сумма ставки: $</label>
                     <input type="number" id="slotsBet" value="10" min="1" max="1000">
-                    <button id="spinBtn" class="btn btn-primary btn-large">SPIN 🎰</button>
+                    <button id="spinBtn" class="btn btn-primary btn-large">КРУТИТЬ 🎰</button>
                 </div>
                 <div id="slotsResult" class="result"></div>
             </div>
 
             <!-- Roulette Game -->
             <div id="rouletteGame" class="game">
-                <h2>Roulette</h2>
+                <h2>Рулетка</h2>
                 <div class="roulette-wheel">
                     <div id="rouletteNumber" class="roulette-number">0</div>
                 </div>
                 <div class="bet-controls">
-                    <label>Bet Amount: $</label>
+                    <label>Сумма ставки: $</label>
                     <input type="number" id="rouletteBet" value="10" min="1" max="1000">
                 </div>
                 <div class="roulette-bets">
                     <div class="bet-section">
-                        <h3>Bet Type</h3>
+                        <h3>Тип ставки</h3>
                         <div class="bet-buttons">
-                            <button class="bet-btn" data-type="color" data-value="red">Red (2x)</button>
-                            <button class="bet-btn" data-type="color" data-value="black">Black (2x)</button>
-                            <button class="bet-btn" data-type="even_odd" data-value="even">Even (2x)</button>
-                            <button class="bet-btn" data-type="even_odd" data-value="odd">Odd (2x)</button>
-                            <button class="bet-btn" data-type="low_high" data-value="low">Low 1-18 (2x)</button>
-                            <button class="bet-btn" data-type="low_high" data-value="high">High 19-36 (2x)</button>
+                            <button class="bet-btn" data-type="color" data-value="red">Красное (2x)</button>
+                            <button class="bet-btn" data-type="color" data-value="black">Чёрное (2x)</button>
+                            <button class="bet-btn" data-type="even_odd" data-value="even">Чётное (2x)</button>
+                            <button class="bet-btn" data-type="even_odd" data-value="odd">Нечётное (2x)</button>
+                            <button class="bet-btn" data-type="low_high" data-value="low">Малое 1-18 (2x)</button>
+                            <button class="bet-btn" data-type="low_high" data-value="high">Большое 19-36 (2x)</button>
                         </div>
                     </div>
                     <div class="bet-section">
-                        <h3>Number (36x)</h3>
+                        <h3>Номер (36x)</h3>
                         <input type="number" id="rouletteNumberBet" placeholder="0-36" min="0" max="36">
-                        <button id="betNumberBtn" class="btn btn-primary">Bet on Number</button>
+                        <button id="betNumberBtn" class="btn btn-primary">Ставка на номер</button>
                     </div>
                 </div>
                 <div id="rouletteResult" class="result"></div>
@@ -97,70 +97,70 @@
 
             <!-- Blackjack Game -->
             <div id="blackjackGame" class="game">
-                <h2>Blackjack</h2>
+                <h2>Блэкджек</h2>
                 <div class="blackjack-table">
                     <div class="dealer-hand">
-                        <h3>Dealer: <span id="dealerValue">0</span></h3>
+                        <h3>Дилер: <span id="dealerValue">0</span></h3>
                         <div id="dealerCards" class="cards"></div>
                     </div>
                     <div class="player-hand">
-                        <h3>Player: <span id="playerValue">0</span></h3>
+                        <h3>Игрок: <span id="playerValue">0</span></h3>
                         <div id="playerCards" class="cards"></div>
                     </div>
                 </div>
                 <div class="bet-controls">
-                    <label>Bet Amount: $</label>
+                    <label>Сумма ставки: $</label>
                     <input type="number" id="blackjackBet" value="10" min="1" max="1000">
-                    <button id="dealBtn" class="btn btn-primary">Deal</button>
-                    <button id="hitBtn" class="btn btn-secondary" disabled>Hit</button>
-                    <button id="standBtn" class="btn btn-secondary" disabled>Stand</button>
+                    <button id="dealBtn" class="btn btn-primary">Раздать</button>
+                    <button id="hitBtn" class="btn btn-secondary" disabled>Еще</button>
+                    <button id="standBtn" class="btn btn-secondary" disabled>Хватит</button>
                 </div>
                 <div id="blackjackResult" class="result"></div>
             </div>
 
             <!-- Poker Game -->
             <div id="pokerGame" class="game">
-                <h2>Texas Hold'em Poker</h2>
+                <h2>Техасский Холдем Покер</h2>
                 <div class="poker-table">
                     <div class="community-cards">
-                        <h3>Community Cards</h3>
+                        <h3>Общие карты</h3>
                         <div id="communityCards" class="cards"></div>
                     </div>
                     <div class="player-poker-hand">
-                        <h3>Your Hand</h3>
+                        <h3>Ваши карты</h3>
                         <div id="pokerPlayerCards" class="cards"></div>
                     </div>
                     <div id="pokerHandRank" class="hand-rank"></div>
                 </div>
                 <div class="bet-controls">
-                    <label>Bet Amount: $</label>
+                    <label>Сумма ставки: $</label>
                     <input type="number" id="pokerBet" value="10" min="1" max="1000">
-                    <button id="pokerDealBtn" class="btn btn-primary">Deal Hand</button>
+                    <button id="pokerDealBtn" class="btn btn-primary">Раздать карты</button>
                 </div>
                 <div id="pokerResult" class="result"></div>
             </div>
 
             <!-- Dice Game -->
             <div id="diceGame" class="game">
-                <h2>Dice Game (Craps)</h2>
+                <h2>Игра в Кости (Крэпс)</h2>
                 <div class="dice-display">
                     <div class="dice" id="dice1">⚅</div>
                     <div class="dice" id="dice2">⚅</div>
                 </div>
-                <div class="dice-total" id="diceTotal">Total: 12</div>
+                <div class="dice-total" id="diceTotal">Сумма: 12</div>
                 <div class="bet-controls">
-                    <label>Bet Amount: $</label>
+                    <label>Сумма ставки: $</label>
                     <input type="number" id="diceBet" value="10" min="1" max="1000">
                 </div>
                 <div class="dice-bets">
-                    <h3>Choose Your Bet</h3>
+                    <h3>Выберите ставку</h3>
                     <div class="bet-buttons">
-                        <button class="bet-btn" data-bet="seven">Seven (5x)</button>
-                        <button class="bet-btn" data-bet="eleven">Eleven (8x)</button>
-                        <button class="bet-btn" data-bet="high">High (8-12) (2x)</button>
-                        <button class="bet-btn" data-bet="low">Low (2-6) (2x)</button>
-                        <button class="bet-btn" data-bet="even">Even (2x)</button>
-                        <button class="bet-btn" data-bet="odd">Odd (2x)</button>
+                        <button class="bet-btn" data-bet="seven">Семь (5x)</button>
+                        <button class="bet-btn" data-bet="eleven">Одиннадцать (8x)</button>
+                        <button class="bet-btn" data-bet="high">Большое (8-12) (2x)</button>
+                        <button class="bet-btn" data-bet="low">Малое (2-6) (2x)</button>
+                        <button class="bet-btn" data-bet="even">Чётное (2x)</button>
+                        <button class="bet-btn" data-bet="odd">Нечётное (2x)</button>
                     </div>
                 </div>
                 <div id="diceResult" class="result"></div>
@@ -168,27 +168,27 @@
 
             <!-- Baccarat Game -->
             <div id="baccaratGame" class="game">
-                <h2>Baccarat</h2>
+                <h2>Баккара</h2>
                 <div class="baccarat-table">
                     <div class="baccarat-hand">
-                        <h3>Banker: <span id="bankerValue">0</span></h3>
+                        <h3>Банкир: <span id="bankerValue">0</span></h3>
                         <div id="bankerCards" class="cards"></div>
                     </div>
                     <div class="baccarat-hand">
-                        <h3>Player: <span id="baccaratPlayerValue">0</span></h3>
+                        <h3>Игрок: <span id="baccaratPlayerValue">0</span></h3>
                         <div id="baccaratPlayerCards" class="cards"></div>
                     </div>
                 </div>
                 <div class="bet-controls">
-                    <label>Bet Amount: $</label>
+                    <label>Сумма ставки: $</label>
                     <input type="number" id="baccaratBet" value="10" min="1" max="1000">
                 </div>
                 <div class="baccarat-bets">
-                    <h3>Choose Your Bet</h3>
+                    <h3>Выберите ставку</h3>
                     <div class="bet-buttons">
-                        <button class="bet-btn" data-side="player">Player (2x)</button>
-                        <button class="bet-btn" data-side="banker">Banker (1.95x)</button>
-                        <button class="bet-btn" data-side="tie">Tie (9x)</button>
+                        <button class="bet-btn" data-side="player">Игрок (2x)</button>
+                        <button class="bet-btn" data-side="banker">Банкир (1.95x)</button>
+                        <button class="bet-btn" data-side="tie">Ничья (9x)</button>
                     </div>
                 </div>
                 <div id="baccaratResult" class="result"></div>
@@ -196,7 +196,7 @@
 
             <!-- History -->
             <div id="historyGame" class="game">
-                <h2>Game History</h2>
+                <h2>История игр</h2>
                 <div id="historyList" class="history-list"></div>
             </div>
         </main>
