@@ -68,6 +68,25 @@ function initializeEventListeners() {
     document.getElementById('hitBtn').addEventListener('click', hitBlackjack);
     document.getElementById('standBtn').addEventListener('click', standBlackjack);
 
+    // Poker
+    document.getElementById('pokerDealBtn').addEventListener('click', playPoker);
+
+    // Dice
+    document.querySelectorAll('#diceGame .bet-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const betType = e.target.dataset.bet;
+            playDice(betType);
+        });
+    });
+
+    // Baccarat
+    document.querySelectorAll('#baccaratGame .bet-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const side = e.target.dataset.side;
+            playBaccarat(side);
+        });
+    });
+
     // Enter key support
     document.getElementById('password').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') handleLogin();
@@ -429,6 +448,149 @@ function enableBlackjackButtons(deal, hit, stand) {
     document.getElementById('dealBtn').disabled = !deal;
     document.getElementById('hitBtn').disabled = !hit;
     document.getElementById('standBtn').disabled = !stand;
+}
+
+// Poker
+async function playPoker() {
+    const betAmount = parseFloat(document.getElementById('pokerBet').value);
+    
+    if (!betAmount || betAmount <= 0) {
+        showResult('poker', 'Please enter a valid bet amount', 'loss');
+        return;
+    }
+
+    try {
+        const data = await apiCall('/games/poker', 'POST', { betAmount });
+        
+        // Display cards
+        displayPokerHands(data.playerHand, data.communityCards);
+        
+        // Display hand rank
+        document.getElementById('pokerHandRank').textContent = `Hand: ${data.handRank}`;
+        
+        // Display result
+        const profit = data.winAmount - betAmount;
+        if (data.won) {
+            showResult('poker', `You won $${data.winAmount.toFixed(2)}! (${data.handRank})`, 'win');
+        } else {
+            showResult('poker', `You lost $${betAmount.toFixed(2)}`, 'loss');
+        }
+        
+        // Update balance
+        updateBalance(data.newBalance);
+    } catch (error) {
+        showResult('poker', error.message, 'loss');
+    }
+}
+
+function displayPokerHands(playerHand, communityCards) {
+    const playerCards = document.getElementById('pokerPlayerCards');
+    const commCards = document.getElementById('communityCards');
+    
+    playerCards.innerHTML = '';
+    commCards.innerHTML = '';
+    
+    playerHand.forEach(card => {
+        playerCards.appendChild(createCardElement(card));
+    });
+    
+    communityCards.forEach(card => {
+        commCards.appendChild(createCardElement(card));
+    });
+}
+
+// Dice
+async function playDice(betType) {
+    const betAmount = parseFloat(document.getElementById('diceBet').value);
+    
+    if (!betAmount || betAmount <= 0) {
+        showResult('dice', 'Please enter a valid bet amount', 'loss');
+        return;
+    }
+
+    try {
+        // Animate dice roll
+        const dice1 = document.getElementById('dice1');
+        const dice2 = document.getElementById('dice2');
+        dice1.classList.add('rolling');
+        dice2.classList.add('rolling');
+
+        const data = await apiCall('/games/dice', 'POST', { betAmount, betType });
+        
+        // Display dice after animation
+        setTimeout(() => {
+            dice1.classList.remove('rolling');
+            dice2.classList.remove('rolling');
+            
+            const diceSymbols = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+            dice1.textContent = diceSymbols[data.dice1 - 1];
+            dice2.textContent = diceSymbols[data.dice2 - 1];
+            document.getElementById('diceTotal').textContent = `Total: ${data.total}`;
+            
+            // Display result
+            if (data.won) {
+                showResult('dice', `You won $${data.winAmount.toFixed(2)}! Rolled ${data.total}`, 'win');
+            } else {
+                showResult('dice', `You lost $${betAmount.toFixed(2)}. Rolled ${data.total}`, 'loss');
+            }
+            
+            // Update balance
+            updateBalance(data.newBalance);
+        }, 500);
+    } catch (error) {
+        dice1.classList.remove('rolling');
+        dice2.classList.remove('rolling');
+        showResult('dice', error.message, 'loss');
+    }
+}
+
+// Baccarat
+async function playBaccarat(side) {
+    const betAmount = parseFloat(document.getElementById('baccaratBet').value);
+    
+    if (!betAmount || betAmount <= 0) {
+        showResult('baccarat', 'Please enter a valid bet amount', 'loss');
+        return;
+    }
+
+    try {
+        const data = await apiCall('/games/baccarat', 'POST', { betAmount, side });
+        
+        // Display cards
+        displayBaccaratHands(data.playerHand, data.bankerHand);
+        
+        // Display values
+        document.getElementById('baccaratPlayerValue').textContent = data.playerValue;
+        document.getElementById('bankerValue').textContent = data.bankerValue;
+        
+        // Display result
+        if (data.won) {
+            showResult('baccarat', `${data.winner} wins! You won $${data.winAmount.toFixed(2)}`, 'win');
+        } else {
+            showResult('baccarat', `${data.winner} wins. You lost $${betAmount.toFixed(2)}`, 'loss');
+        }
+        
+        // Update balance
+        updateBalance(data.newBalance);
+    } catch (error) {
+        showResult('baccarat', error.message, 'loss');
+    }
+}
+
+function displayBaccaratHands(playerHand, bankerHand) {
+    const playerCards = document.getElementById('baccaratPlayerCards');
+    const bankerCards = document.getElementById('bankerCards');
+    
+    playerCards.innerHTML = '';
+    bankerCards.innerHTML = '';
+    
+    playerHand.forEach(card => {
+        playerCards.appendChild(createCardElement(card));
+    });
+    
+    bankerHand.forEach(card => {
+        bankerCards.appendChild(createCardElement(card));
+    });
 }
 
 // History
